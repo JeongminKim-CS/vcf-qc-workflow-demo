@@ -1,0 +1,6 @@
+# Local RStudio HTML previews
+/README.html
+/examples/four_groups/05_report/qc_report.html
+
+# macOS Finder metadata
+.DS_Store
