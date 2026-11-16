@@ -31,8 +31,8 @@ The workflow was verified with PLINK v2.0.0-b.1.4 M1 (7 Nov 2026).
 
 ## Demo results
 
-- **Samples.** 99 of 100 passed QC. `DEMO100` was excluded because its genotype
-missingness was 20%.
+- **Samples.** At a maximum sample missingness threshold of 10%, 99 of 100
+samples passed QC. DEMO100 was excluded because its genotype missingness was 20%.
 - **SNPs.** 998 of 1,000 passed variant QC. One SNP exceeded the missingness
 threshold, and one monomorphic SNP fell below the MAF threshold.
 - **PCA.** Ten PCs were computed. The largest adjacent eigenvalue drop was
@@ -40,12 +40,32 @@ between PC3 and PC4, consistent with the three group contrasts in the simulation
 - **Sample inventory.** Each input sample has one row with its simulated group,
 pre-QC missingness, QC status, and PC scores where available.
 
+## Find and export QC results across studies
+
+The MySQL catalog finds processed datasets by assay method, specimen source,
+and cell type. In this synthetic example, a search for Genotyping
+Array A · Peripheral blood · T cell returned three QC runs across two studies.
+The workflow selected and exported the two runs that used a maximum sample
+missingness threshold of 5%.
+
+| Study | QC run | Exported samples |
+| --- | --- | ---: |
+| `DEMO_STUDY_001` | `QC_002` | 98 |
+| `DEMO_STUDY_002` | `QC_003` | 23 |
+
+The export produced one PLINK file set (`.pgen`, `.pvar`, `.psam`) and
+one sample metadata CSV per study. The workflow verified each file's
+SHA-256 checksum and matched the CSV sample IDs and order to the `.psam`.
+
+This example was verified using local storage and synthetic genotypes.
+The second dataset is a subset of the first with renamed sample IDs.
+Assay and specimen labels are illustrative.
+
 ## Planned QC extensions
 
 - **Laboratory metadata.** Flag DNA quantity below 200 ng and lab-reported
 call rate below 97% when those measurements are available.
-- **Sample QC.** Add sex concordance, relatedness, and heterozygosity checks,
-and evaluate a 5% sample missingness threshold.
+- **Sample QC.** Add sex concordance, relatedness, and heterozygosity checks.
 - **Variant QC.** Evaluate a 5% variant missingness threshold, a minimum MAF
 of 1%, and Hardy–Weinberg equilibrium (HWE) filtering at p ≤ 1 × 10⁻⁶
 in a defined sample set.
